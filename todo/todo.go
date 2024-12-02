@@ -8,17 +8,17 @@ import (
 	"time"
 )
 
-type item struct {
-	Task        string
-	Done        bool
-	CreatedAt   time.Time
-	CompletedAt time.Time
+type Task struct {
+	CompletedAt time.Time `json:"completed_at"`
+	CreatedAt   time.Time `json:"created_at"`
+	Task        string    `json:"task"`
+	Done        bool      `json:"done"`
 }
 
-type List []item
+type List []Task
 
 func (l *List) Add(task string) {
-	t := item{
+	t := Task{
 		Task:        task,
 		Done:        false,
 		CreatedAt:   time.Now(),
@@ -67,4 +67,17 @@ func (l *List) Get(filename string) error {
 		return nil
 	}
 	return json.Unmarshal(file, l)
+}
+
+func (l *List) String() string {
+	formatted := ""
+
+	for k, t := range *l {
+		prefix := "  "
+		if t.Done {
+			prefix = "X "
+		}
+		formatted += fmt.Sprintf("%s%d: %s\n", prefix, k+1, t.Task)
+	}
+	return formatted
 }
